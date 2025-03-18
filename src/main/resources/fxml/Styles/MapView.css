@@ -1,0 +1,16 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 18 mar 2025, 15:12:34
+    Author     : Albin
+*/
+.anchor-pane {
+    -fx-background-color: #2E4053;
+    -fx-background-image: url("/Images/intro(1).jpg");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-border-color: white;
+    -fx-border-width: 2px;
+}

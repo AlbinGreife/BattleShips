@@ -48,7 +48,7 @@ public class DifficultSelectionController implements Initializable {
    }
 
     @FXML
-    private void startGame(ActionEvent event) {
+    private void startGame(ActionEvent event) throws IOException {
         String selectedDifficult = chooseDif.getValue();
 
     if (selectedDifficult != null) {
@@ -58,6 +58,7 @@ public class DifficultSelectionController implements Initializable {
 
         // cambiar a pantalla de juego
         System.out.println("Starting game in " + selectedDifficult + " mode...");
+        scene.setRoot(loadFXML("GamePlayWindow"));
     } else {
         Label1.setText("Please select a difficult level.");
     }

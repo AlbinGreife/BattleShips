@@ -4,7 +4,7 @@ package projectClasses;
  *
  * @author Albin
  */
-public interface State {
+public interface States {
     
     void shoot();//cantidad de balas según dificultad
     void mapSize();//cambia el tamaño del gridpane según la dificultad

@@ -8,7 +8,7 @@ package projectClasses;
  *
  * @author Albin
  */
-public class Easy implements State {
+public class Easy implements States {
     private DifficultClass difficult;
 
     @Override

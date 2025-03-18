@@ -11,14 +11,14 @@ import java.lang.Thread.State;
  * @author Albin
  */
 public class DifficultClass {
-    private State state; 
+    private States state; 
     
     public DifficultClass() {
         setState(new Easy());
 }
 
-    public void setState(State state){
+    public void setState(States state){
         this.state = state;
-        this.state.
+        this.state.setDifficult(this);
     }
 }

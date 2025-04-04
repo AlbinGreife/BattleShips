@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+//añadir import javafx.scene.media.AudioClip;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -25,45 +26,38 @@ import projectClasses.Config;
  */
 public class DifficultSelectionController implements Initializable {
 
-    /**
-     * Initializes the controller class.
-     */
-    String[] difArray = {
-         "Easy","Medium","Hard"};
+    private final String[] difArray = {"Easy", "Medium", "Hard"};
+
     @FXML
     private ChoiceBox<String> chooseDif;
     @FXML
     private Label Label1;
     @FXML
     private Button startButton;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         chooseDif.setItems(FXCollections.observableArrayList(difArray));
-        
-    }    
-    
-     @FXML
-   public void backMenu() throws IOException{
+    }
+
+    @FXML
+    public void backMenu() throws IOException {
         scene.setRoot(loadFXML("MapView"));
-   }
+    }
 
     @FXML
     private void startGame(ActionEvent event) throws IOException {
-        String selectedDifficult = chooseDif.getValue();
+        String selectedDifficulty = chooseDif.getValue();
 
-    if (selectedDifficult != null) {
-        Config.setSelectedDifficult(selectedDifficult);
+        if (selectedDifficulty != null) {
+            Config.setDifficulty(selectedDifficulty);
 
-        Label1.setText("Difficult selected: " + selectedDifficult);
+            Label1.setText("Difficult selected: " + selectedDifficulty);
 
-        // cambiar a pantalla de juego
-        System.out.println("Starting game in " + selectedDifficult + " mode...");
-        scene.setRoot(loadFXML("GamePlayWindow"));
-    } else {
-        Label1.setText("Please select a difficult level.");
+            System.out.println("Starting game in " + selectedDifficulty + " mode...");
+            scene.setRoot(loadFXML("GamePlayWindow"));
+        } else {
+            Label1.setText("Please select a difficulty level.");
+        }
     }
-    }
-   
-
-    
 }

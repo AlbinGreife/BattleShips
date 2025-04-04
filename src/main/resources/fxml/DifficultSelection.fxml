@@ -14,7 +14,7 @@
    <children>
       <Pane prefHeight="400.0" prefWidth="600.0">
          <children>
-            <ChoiceBox fx:id="chooseDif" layoutX="14.0" layoutY="101.0" prefWidth="150.0" />
+            <ChoiceBox fx:id="chooseDif" layoutX="14.0" layoutY="101.0" prefHeight="25.0" prefWidth="169.0" />
             <Label fx:id="Label1" layoutX="14.0" layoutY="54.0" prefHeight="37.0" prefWidth="401.0" text="Seleccione la dificultad">
                <textFill>
                   <LinearGradient endX="1.0" endY="0.7772511848341233" startX="1.0" startY="0.1848341232227488">
@@ -36,7 +36,7 @@
                   <Font name="Impact" size="29.0" />
                </font></Label>
             <Button layoutX="14.0" layoutY="149.0" mnemonicParsing="false" onAction="#backMenu" text="Back to menu" />
-            <Button fx:id="startButton" layoutX="113.0" layoutY="149.0" mnemonicParsing="false" onAction="#startGame" prefHeight="25.0" prefWidth="51.0" text="Start" />
+            <Button fx:id="startButton" layoutX="132.0" layoutY="149.0" mnemonicParsing="false" onAction="#startGame" prefHeight="25.0" prefWidth="51.0" text="Start" />
          </children>
       </Pane>
    </children>

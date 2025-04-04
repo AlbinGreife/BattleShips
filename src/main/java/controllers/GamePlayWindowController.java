@@ -1,247 +1,393 @@
 package controllers;
 
+import projectClasses.Config;
 import static com.mycompany.battleships.App.loadFXML;
 import static com.mycompany.battleships.App.scene;
 import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
 
-public class GamePlayWindowController implements Initializable {
+public class GamePlayWindowController {
 
-    @FXML
-    private Label shipText;
-    @FXML
-    private Rectangle battleship;
-    @FXML
-    private Rectangle destroyer2;
-    @FXML
-    private Rectangle destroyer1;
-    @FXML
-    private Rectangle destroyer3;
-    @FXML
-    private Rectangle cruiser1;
-    @FXML
-    private Rectangle submarine4;
-    @FXML
-    private Rectangle submarine3;
-    @FXML
-    private Rectangle submarine2;
-    @FXML
-    private Rectangle submarine1;
-    @FXML
-    private Rectangle cruiser2;
     @FXML
     private GridPane gridPane;
+
     @FXML
-    private Button backScreen;
+    private VBox shipsBox;
+
     @FXML
-    private Button saveGridState;
-
-    private double offsetX, offsetY; // Para el arrastrar los barcos
-    private static final int GRID_SIZE = 10; // Tamaño del tablero (10x10)
-    private double cellSize; // Tamaño de cada celda (se ajusta dinámicamente)
+    private Button startButton;
     @FXML
-    private Label shipText1;
+    public void startBattle() throws IOException {
+        scene.setRoot(loadFXML("PrimaryWindow"));
+    }
+    private final int CELL_SIZE = 40;
+    private int gridSize;
+    private boolean[][] occupiedCells;
+    // cellInfo saves "ship:<color>" for ships, "island" for islands, "trap" for traps.
+    private String[][] cellInfo;
+    // Ships list and replacing
+    private List<PlacedShip> placedShips = new ArrayList<>();
 
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // Ajustar el tamaño del GridPane y los barcos al tamaño de la ventana
-        setupGridAndShips();
+    // Class represents a ship into the cell.
+    private class PlacedShip {
+        int row, col, size;
+        Color color;
+        boolean horizontal; // true: horizontal, false: vertical.
 
-        // Configurar eventos de arrastre y rotación
-        setupDragAndDrop(battleship);
-        setupDragAndDrop(destroyer1);
-        setupDragAndDrop(destroyer2);
-        setupDragAndDrop(destroyer3);
-        setupDragAndDrop(cruiser1);
-        setupDragAndDrop(cruiser2);
-        setupDragAndDrop(submarine1);
-        setupDragAndDrop(submarine2);
-        setupDragAndDrop(submarine3);
-        setupDragAndDrop(submarine4);
+        PlacedShip(int row, int col, int size, Color color) {
+            this.row = row;
+            this.col = col;
+            this.size = size;
+            this.color = color;
+            this.horizontal = true; // Default ini position.
+        }
     }
 
-    // Ajustar el tamaño del GridPane y los barcos al tamaño de la ventana
-    private void setupGridAndShips() {
-        // Escuchar cambios en el tamaño del GridPane
-        gridPane.widthProperty().addListener((obs, oldVal, newVal) -> {
-            cellSize = newVal.doubleValue() / GRID_SIZE;
-            resizeShips();
-        });
-
-        gridPane.heightProperty().addListener((obs, oldVal, newVal) -> {
-            cellSize = newVal.doubleValue() / GRID_SIZE;
-            resizeShips();
-        });
-
-        // Configurar el tamaño inicial de los barcos
-        cellSize = gridPane.getWidth() / GRID_SIZE;
-        resizeShips();
+    public void initialize()  {
+        this.gridSize = Config.getGridSize();
+        this.occupiedCells = new boolean[gridSize][gridSize];
+        this.cellInfo = new String[gridSize][gridSize];
+        createGrid();
+        addShips();
+        setupStartButton();
     }
 
-    // Redimensionar los barcos según el tamaño de las celdas
-    private void resizeShips() {
-        setupShipSize(battleship, 4); // Acorazado (4 casillas)
-        setupShipSize(cruiser1, 3);   // Crucero 1 (3 casillas)
-        setupShipSize(cruiser2, 3);   // Crucero 2 (3 casillas)
-        setupShipSize(destroyer1, 2); // Destructor 1 (2 casillas)
-        setupShipSize(destroyer2, 2); // Destructor 2 (2 casillas)
-        setupShipSize(destroyer3, 2); // Destructor 3 (2 casillas)
-        setupShipSize(submarine1, 1); // Submarino 1 (1 casilla)
-        setupShipSize(submarine2, 1); // Submarino 2 (1 casilla)
-        setupShipSize(submarine3, 1); // Submarino 3 (1 casilla)
-        setupShipSize(submarine4, 1); // Submarino 4 (1 casilla)
-    }
+    private void createGrid() {
+        gridPane.getChildren().clear();
+        for (int row = 0; row < gridSize; row++) {
+            for (int col = 0; col < gridSize; col++) {
+                Pane pane = new Pane();
+                pane.setPrefSize(CELL_SIZE, CELL_SIZE);
+                pane.setStyle("-fx-border-color: black; -fx-background-color: lightgray;");
+                final int finalRow = row;
+                final int finalCol = col;
 
-    // Configurar el tamaño de un barco según su tipo
-    private void setupShipSize(Rectangle ship, int size) {
-        ship.setWidth(size * cellSize);
-        ship.setHeight(cellSize);
-    }
-
-    // Configurar eventos de arrastre y rotación para un barco
-    private void setupDragAndDrop(Rectangle ship) {
-        ship.setOnMousePressed((MouseEvent event) -> {
-            offsetX = event.getSceneX() - ship.getTranslateX();
-            offsetY = event.getSceneY() - ship.getTranslateY();
-        });
-
-        ship.setOnMouseDragged((MouseEvent event) -> {
-            ship.setTranslateX(event.getSceneX() - offsetX);
-            ship.setTranslateY(event.getSceneY() - offsetY);
-        });
-
-        ship.setOnMouseReleased((MouseEvent event) -> {
-            // Obtener la posición del ratón respecto al GridPane
-            double mouseX = event.getSceneX() - gridPane.localToScene(0, 0).getX();
-            double mouseY = event.getSceneY() - gridPane.localToScene(0, 0).getY();
-
-            // Calcular la celda en la que se soltó el barco
-            int col = (int) (mouseX / cellSize);
-            int row = (int) (mouseY / cellSize);
-
-            // Limitar las posiciones dentro del tablero
-            col = Math.max(0, Math.min(col, GRID_SIZE - 1));
-            row = Math.max(0, Math.min(row, GRID_SIZE - 1));
-
-            // Verificar si la posición es válida (no se superpone con otros barcos)
-            if (isValidPosition(ship, col, row)) {
-                // Restablecer la posición del barco dentro del GridPane
-                ship.setTranslateX(0);
-                ship.setTranslateY(0);
-                GridPane.setColumnIndex(ship, col);
-                GridPane.setRowIndex(ship, row);
-            } else {
-                // Si la posición no es válida, regresar el barco a su posición anterior
-                ship.setTranslateX(0);
-                ship.setTranslateY(0);
-            }
-        });
-
-        // Rotar el barco 90 grados al hacer doble clic
-        ship.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                // Rotar el barco
-                double width = ship.getWidth();
-                double height = ship.getHeight();
-                ship.setWidth(height);
-                ship.setHeight(width);
-
-                // Obtener la posición actual del barco
-                int col = GridPane.getColumnIndex(ship);
-                int row = GridPane.getRowIndex(ship);
-
-                // Verificar si la nueva posición es válida después de la rotación
-                if (!isValidPosition(ship, col, row)) {
-                    // Si no es válida, revertir la rotación
-                    ship.setWidth(width);
-                    ship.setHeight(height);
-                }
-            }
-        });
-    }
-
-    // Verificar si la posición del barco es válida (no se superpone con otros barcos)
-    private boolean isValidPosition(Rectangle ship, int col, int row) {
-        int size = (int) (ship.getWidth() / cellSize); // Tamaño del barco
-
-        for (int i = 0; i < size; i++) {
-            int checkCol = col + (ship.getWidth() > ship.getHeight() ? i : 0);
-            int checkRow = row + (ship.getWidth() > ship.getHeight() ? 0 : i);
-
-            // Verificar si la celda está dentro del tablero
-            if (checkCol >= GRID_SIZE || checkRow >= GRID_SIZE) {
-                return false;
-            }
-
-            // Verificar si la celda está ocupada por otro barco
-            for (javafx.scene.Node node : gridPane.getChildren()) {
-                if (node instanceof Rectangle && node != ship) {
-                    int nodeCol = GridPane.getColumnIndex(node);
-                    int nodeRow = GridPane.getRowIndex(node);
-                    int nodeSize = (int) (((Rectangle) node).getWidth() / cellSize);
-
-                    for (int j = 0; j < nodeSize; j++) {
-                        int nodeCheckCol = nodeCol + (((Rectangle) node).getWidth() > ((Rectangle) node).getHeight() ? j : 0);
-                        int nodeCheckRow = nodeRow + (((Rectangle) node).getWidth() > ((Rectangle) node).getHeight() ? 0 : j);
-
-                        if (checkCol == nodeCheckCol && checkRow == nodeCheckRow) {
-                            return false; // Superposición detectada
+                // Allow dragging an placed ship.
+                pane.setOnDragDetected(event -> {
+                    // If the cell has a ship, restart colocation.
+                    if (cellInfo[finalRow][finalCol] != null && cellInfo[finalRow][finalCol].startsWith("ship:")) {
+                        PlacedShip target = null;
+                        // Look for the ship that encompasses that cell.
+                        for (PlacedShip ps : placedShips) {
+                            if (ps.horizontal) {
+                                if (finalRow == ps.row && finalCol >= ps.col && finalCol < ps.col + ps.size) {
+                                    target = ps;
+                                    break;
+                                }
+                            } else {
+                                if (finalCol == ps.col && finalRow >= ps.row && finalRow < ps.row + ps.size) {
+                                    target = ps;
+                                    break;
+                                }
+                            }
+                        }
+                        if (target != null) {
+                            // Remove ship from the list and clean it.
+                            placedShips.remove(target);
+                            if (target.horizontal) {
+                                for (int i = 0; i < target.size; i++) {
+                                    int r = target.row, c = target.col + i;
+                                    occupiedCells[r][c] = false;
+                                    cellInfo[r][c] = null;
+                                    Pane cell = getCellAt(r, c);
+                                    if (cell != null) {
+                                        cell.setStyle("-fx-background-color: lightgray; -fx-border-color: black;");
+                                    }
+                                }
+                            } else {
+                                for (int i = 0; i < target.size; i++) {
+                                    int r = target.row + i, c = target.col;
+                                    occupiedCells[r][c] = false;
+                                    cellInfo[r][c] = null;
+                                    Pane cell = getCellAt(r, c);
+                                    if (cell != null) {
+                                        cell.setStyle("-fx-background-color: lightgray; -fx-border-color: black;");
+                                    }
+                                }
+                            }
+                            //Create draggable node for ships and add it to shipbox.
+                            Rectangle newShip = createShip(target.size, target.color);
+                            shipsBox.getChildren().add(newShip);
+                            event.consume();
                         }
                     }
+                });
+
+                // Allow a cell to recieve a ship.
+                pane.setOnDragOver(event -> {
+                    if (event.getGestureSource() != pane && event.getDragboard().hasString()) {
+                        if (!occupiedCells[finalRow][finalCol]) {
+                            event.acceptTransferModes(TransferMode.MOVE);
+                        }
+                    }
+                    event.consume();
+                });
+
+                pane.setOnDragDropped(event -> {
+                    Dragboard db = event.getDragboard();
+                    boolean success = false;
+                    if (db.hasString()) {
+                        Rectangle ship = (Rectangle) event.getGestureSource();
+                        int shipSize = (int) (ship.getWidth() / CELL_SIZE);
+                        // Check horizontal position without overlap.
+                        boolean canPlace = true;
+                        for (int i = 0; i < shipSize; i++) {
+                            if (finalCol + i >= gridSize || occupiedCells[finalRow][finalCol + i]) {
+                                canPlace = false;
+                                break;
+                            }
+                        }
+                        if (canPlace) {
+                            for (int i = 0; i < shipSize; i++) {
+                                occupiedCells[finalRow][finalCol + i] = true;
+                                cellInfo[finalRow][finalCol + i] = "ship:" + getCssColor((Color) ship.getFill());
+                                Pane cell = getCellAt(finalRow, finalCol + i);
+                                if (cell != null) {
+                                    cell.setStyle("-fx-background-color: " + getCssColor((Color) ship.getFill()) + "; -fx-border-color: black;");
+                                }
+                            }
+                            placedShips.add(new PlacedShip(finalRow, finalCol, shipSize, (Color) ship.getFill()));
+                            shipsBox.getChildren().remove(ship);
+                            success = true;
+                        }
+                    }
+                    event.setDropCompleted(success);
+                    event.consume();
+                });
+
+                // Ship rotation(double click).
+                pane.setOnMouseClicked(event -> {
+                    if (event.getClickCount() == 2) {
+                        Integer r = GridPane.getRowIndex(pane);
+                        Integer c = GridPane.getColumnIndex(pane);
+                        if (r == null || c == null) return;
+                        if (cellInfo[r][c] != null && cellInfo[r][c].startsWith("ship:")) {
+                            PlacedShip target = null;
+                            for (PlacedShip ps : placedShips) {
+                                if (ps.horizontal) {
+                                    if (r == ps.row && c >= ps.col && c < ps.col + ps.size) {
+                                        target = ps;
+                                        break;
+                                    }
+                                } else {
+                                    if (c == ps.col && r >= ps.row && r < ps.row + ps.size) {
+                                        target = ps;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (target != null) {
+                                rotateShip(target);
+                            }
+                        }
+                    }
+                });
+
+                gridPane.add(pane, col, row);
+            }
+        }
+    }
+
+    private void addShips() {
+        shipsBox.getChildren().clear();
+        Rectangle[] ships = {
+            createShip(4, Color.GRAY),
+            createShip(3, Color.BLUE), createShip(3, Color.BLUE),
+            createShip(2, Color.GREEN), createShip(2, Color.GREEN), createShip(2, Color.GREEN),
+            createShip(1, Color.RED), createShip(1, Color.RED), createShip(1, Color.RED), createShip(1, Color.RED)
+        };
+        shipsBox.getChildren().addAll(ships);
+    }
+
+    private Rectangle createShip(int size, Color color) {
+        Rectangle ship = new Rectangle(CELL_SIZE * size, CELL_SIZE);
+        ship.setFill(color);
+        ship.setStroke(Color.BLACK);
+        ship.setOnDragDetected(event -> {
+            Dragboard db = ship.startDragAndDrop(TransferMode.MOVE);
+            ClipboardContent content = new ClipboardContent();
+            content.putString("ship");
+            db.setContent(content);
+            event.consume();
+        });
+        return ship;
+    }
+
+    // Once pressed checks ovelaps between ships
+    private void setupStartButton() {
+    startButton.setOnAction(event -> {
+        if (!verifyNoOverlap()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error de Colocación");
+            alert.setHeaderText("Superposición de Barcos");
+            alert.setContentText("Existen barcos superpuestos. Por favor, recolóquelos hasta que no se solapen.");
+            alert.showAndWait();
+            return;
+        }
+        Config.setOccupiedCells(occupiedCells);
+        Config.setCellInfo(cellInfo);
+        placeIslandsTraps();
+        try {
+            scene.setRoot(loadFXML("PrimaryWindow"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    });
+}
+
+    // cheking no overlap(ships).
+    private boolean verifyNoOverlap() {
+        int[][] counts = new int[gridSize][gridSize];
+        for (PlacedShip ship : placedShips) {
+            if (ship.horizontal) {
+                for (int i = 0; i < ship.size; i++) {
+                    counts[ship.row][ship.col + i]++;
+                }
+            } else {
+                for (int i = 0; i < ship.size; i++) {
+                    counts[ship.row + i][ship.col]++;
                 }
             }
         }
-
-        return true; // Posición válida
-    }
-
-    private void saveGridState() {
-        String[][] gridState = new String[GRID_SIZE][GRID_SIZE];
-
-        // Inicializar todas las celdas como "Agua"
-        for (int row = 0; row < GRID_SIZE; row++) {
-            for (int col = 0; col < GRID_SIZE; col++) {
-                gridState[col][row] = "Agua";
+        for (int r = 0; r < gridSize; r++) {
+            for (int c = 0; c < gridSize; c++) {
+                if (counts[r][c] > 1) {
+                    return false;
+                }
             }
         }
+        return true;
+    }
 
-        // Recorrer los barcos y marcar sus posiciones en el tablero
+    private void placeIslandsTraps() {
+        // Set islands (show in yellow)
+        List<int[]> islands = Config.getIslandPositions();
+        for (int[] pos : islands) {
+            Pane cell = getCellAt(pos[0], pos[1]);
+            if (cell != null) {
+                cell.setStyle("-fx-background-color: yellow;");
+                cellInfo[pos[0]][pos[1]] = "island";
+            }
+        }
+        // Set traps (shows in black)
+        List<int[]> traps = Config.getTrapPositions();
+        for (int[] pos : traps) {
+            Pane cell = getCellAt(pos[0], pos[1]);
+            if (cell != null) {
+                cell.setStyle("-fx-background-color: black;");
+                cellInfo[pos[0]][pos[1]] = "trap";
+            }
+        }
+    }
+
+    private Pane getCellAt(int row, int col) {
         for (javafx.scene.Node node : gridPane.getChildren()) {
-            if (node instanceof Rectangle) {
-                Rectangle ship = (Rectangle) node; // Hacer casting a Rectangle
-                int col = GridPane.getColumnIndex(ship);
-                int row = GridPane.getRowIndex(ship);
-                int size = (int) (ship.getWidth() / cellSize); // Tamaño del barco
+            Integer r = GridPane.getRowIndex(node);
+            Integer c = GridPane.getColumnIndex(node);
+            if (r != null && c != null && r == row && c == col) {
+                return (Pane) node;
+            }
+        }
+        return null;
+    }
 
-                for (int i = 0; i < size; i++) {
-                    if (ship.getWidth() > ship.getHeight()) { // Barco horizontal
-                        gridState[col + i][row] = "Barco";
-                    } else { // Barco vertical
-                        gridState[col][row + i] = "Barco";
+    private String getCssColor(Color color) {
+        return String.format("#%02X%02X%02X",
+                (int)(color.getRed() * 255),
+                (int)(color.getGreen() * 255),
+                (int)(color.getBlue() * 255));
+    }
+
+    // Ships rotation
+    private void rotateShip(PlacedShip ps) {
+        boolean newOrientation = !ps.horizontal;
+        int[][] newCells = new int[ps.size][2];
+        if (newOrientation) { // De horizontal a vertical.
+            if (ps.row + ps.size > gridSize) return;
+            for (int i = 0; i < ps.size; i++) {
+                newCells[i][0] = ps.row + i;
+                newCells[i][1] = ps.col;
+            }
+        } else { // Vertical to horizontal
+            if (ps.col + ps.size > gridSize) return;
+            for (int i = 0; i < ps.size; i++) {
+                newCells[i][0] = ps.row;
+                newCells[i][1] = ps.col + i;
+            }
+        }
+        boolean[][] simOccupied = new boolean[gridSize][gridSize];
+        for (PlacedShip other : placedShips) {
+            if (other == ps) continue;
+            if (other.horizontal) {
+                for (int i = 0; i < other.size; i++) {
+                    simOccupied[other.row][other.col + i] = true;
+                }
+            } else {
+                for (int i = 0; i < other.size; i++) {
+                    simOccupied[other.row + i][other.col] = true;
+                }
+            }
+        }
+        for (int i = 0; i < ps.size; i++) {
+            int r = newCells[i][0], c = newCells[i][1];
+            if (simOccupied[r][c]) {
+                return; // cancel rotation(colision detected).
+            }
+        }
+        ps.horizontal = newOrientation;
+        // Rebuild global state->update window.
+        boolean[][] newOccupied = new boolean[gridSize][gridSize];
+        String[][] newCellInfo = new String[gridSize][gridSize];
+        for (PlacedShip ship : placedShips) {
+            if (ship.horizontal) {
+                for (int i = 0; i < ship.size; i++) {
+                    int r = ship.row, c = ship.col + i;
+                    newOccupied[r][c] = true;
+                    newCellInfo[r][c] = "ship:" + getCssColor(ship.color);
+                }
+            } else {
+                for (int i = 0; i < ship.size; i++) {
+                    int r = ship.row + i, c = ship.col;
+                    newOccupied[r][c] = true;
+                    newCellInfo[r][c] = "ship:" + getCssColor(ship.color);
+                }
+            }
+        }
+        occupiedCells = newOccupied;
+        cellInfo = newCellInfo;
+        refreshGrid();
+    }
+
+    private void refreshGrid() {
+        for (int row = 0; row < gridSize; row++) {
+            for (int col = 0; col < gridSize; col++) {
+                Pane cell = getCellAt(row, col);
+                if (cell != null) {
+                    if (cellInfo[row][col] != null) {
+                        if (cellInfo[row][col].startsWith("ship:")) {
+                            cell.setStyle("-fx-background-color: " + cellInfo[row][col].substring(5) + "; -fx-border-color: black;");
+                        } else if (cellInfo[row][col].equals("island")) {
+                            cell.setStyle("-fx-background-color: yellow; -fx-border-color: black;");
+                        } else if (cellInfo[row][col].equals("trap")) {
+                            cell.setStyle("-fx-background-color: black; -fx-border-color: black;");
+                        }
+                    } else {
+                        cell.setStyle("-fx-background-color: lightgray; -fx-border-color: black;");
                     }
                 }
             }
         }
-
-        // Imprimir el estado del tablero (puedes guardarlo en un archivo o usarlo en el juego)
-        for (int row = 0; row < GRID_SIZE; row++) {
-            for (int col = 0; col < GRID_SIZE; col++) {
-                System.out.print(gridState[col][row] + " ");
-            }
-            System.out.println();
-        }
-    }
-
-    @FXML
-    public void backScreenDif() throws IOException {
-        scene.setRoot(loadFXML("DifficultSelection"));
     }
 }

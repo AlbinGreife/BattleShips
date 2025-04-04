@@ -1,0 +1,57 @@
+/* Fondo general estilo Battleships */
+.root {
+    -fx-background-color: linear-gradient(to bottom, #001f3f, #003366);
+    -fx-font-family: "Courier New", Courier, monospace;
+}
+
+/* Contenedor del texto oculto: define el área interactiva */
+.secret-container {
+    -fx-background-color: rgba(0, 191, 255, 0.1);
+    -fx-padding: 10px;
+    -fx-border-color: #00bfff;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, #00bfff, 5, 0.5, 0, 0);
+    -fx-alignment: center; /* Centra el contenido */
+    -fx-pref-width: 200px;
+    -fx-pref-height: 50px;
+}
+
+/* El texto dentro está totalmente oculto inicialmente */
+.secret-text {
+    -fx-opacity: 0;
+    -fx-scale-x: 0;
+    -fx-scale-y: 0;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-transition: all 0.4s ease-in-out;
+}
+
+/* Al pasar el mouse sobre el contenedor, el texto aparece */
+.secret-container:hover .secret-text {
+    -fx-opacity: 1;
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+}
+
+/* Botones temáticos estilo radar */
+.button {
+    -fx-background-color: #003366;
+    -fx-text-fill: #00bfff;
+    -fx-border-color: #00bfff;
+    -fx-border-width: 2px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-font-size: 14px;
+}
+
+.button:hover {
+    -fx-background-color: #00bfff;
+    -fx-text-fill: #001f3f;
+    -fx-font-weight: bold;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}

@@ -1,0 +1,16 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 22 abr 2025, 00:36:56
+    Author     : Albin
+*/
+.border-pane {
+    -fx-background-color: #2E4053;
+    -fx-background-image: url("/Images/oceano.jpg");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-border-color: white;
+    -fx-border-width: 2px;
+}

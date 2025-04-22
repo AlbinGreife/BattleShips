@@ -21,7 +21,7 @@ public class App extends Application {
         scene = new Scene(loadFXML("MapView"), 640, 480);
         var appIcon = new Image("/images/icon.png");
         stage.getIcons().add(appIcon);
-        //stage.setResizable(false);
+        stage.setResizable(false);
         stage.setTitle("BatleShips");
         stage.setScene(scene);
         stage.show();

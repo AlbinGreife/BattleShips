@@ -3,6 +3,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.paint.Color?>
@@ -14,7 +15,9 @@
    <children>
       <Pane prefHeight="400.0" prefWidth="600.0">
          <children>
-            <ChoiceBox fx:id="chooseDif" layoutX="14.0" layoutY="101.0" prefHeight="25.0" prefWidth="169.0" />
+            <ChoiceBox fx:id="chooseDif" layoutX="14.0" layoutY="101.0" prefHeight="34.0" prefWidth="177.0" />
+            <!-- Nuevo TextField para el nombre del jugador -->
+            <TextField fx:id="playerNameField" layoutX="14.0" layoutY="140.0" prefHeight="34.0" prefWidth="177.0" promptText="Enter your name" />
             <Label fx:id="Label1" layoutX="14.0" layoutY="54.0" prefHeight="37.0" prefWidth="401.0" text="Seleccione la dificultad">
                <textFill>
                   <LinearGradient endX="1.0" endY="0.7772511848341233" startX="1.0" startY="0.1848341232227488">
@@ -34,9 +37,10 @@
                </textFill>
                <font>
                   <Font name="Impact" size="29.0" />
-               </font></Label>
-            <Button layoutX="14.0" layoutY="149.0" mnemonicParsing="false" onAction="#backMenu" text="Back to menu" />
-            <Button fx:id="startButton" layoutX="132.0" layoutY="149.0" mnemonicParsing="false" onAction="#startGame" prefHeight="25.0" prefWidth="51.0" text="Start" />
+               </font>
+            </Label>
+            <Button layoutX="14.0" layoutY="180.0" mnemonicParsing="false" onAction="#backMenu" prefHeight="34.0" prefWidth="109.0" text="Back to menu" />
+            <Button fx:id="startButton" layoutX="129.0" layoutY="180.0" mnemonicParsing="false" onAction="#startGame" prefHeight="34.0" prefWidth="60.0" text="Start" />
          </children>
       </Pane>
    </children>

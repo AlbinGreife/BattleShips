@@ -1,0 +1,37 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 19 abr 2025, 02:00:21
+    Author     : Albin
+*/
+
+/* Agrega estas clases para los diferentes tipos de barcos */
+.ship-submarine { /* Barco tamaño 1 (rojo) */
+    -fx-background-image: url("/Images/submarine.png");
+    -fx-background-position: center;
+    -fx-background-size: cover;
+    -fx-fill: transparent; /* Oculta el color sólido */
+}
+
+.ship-cruiser { /* Barco tamaño 2 (verde) */
+    -fx-background-image: url("/Images/cruiser.png");
+    -fx-background-position: center;
+    -fx-background-size: cover;
+    -fx-fill: transparent;
+}
+
+.ship-destroyer { /* Barco tamaño 3 (azul) */
+    -fx-background-image: url("/Images/destroyer.png");
+    -fx-background-position: center;
+    -fx-background-size: cover;
+    -fx-fill: transparent;
+}
+
+.ship-battleship { /* Barco tamaño 4 (gris) */
+    -fx-background-image: url("/Images/battleship.png");
+    -fx-background-position: center;
+    -fx-background-size: cover;
+    -fx-fill: transparent;
+}

@@ -3,9 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package projectClasses;
-
+ 
 /**
- *
+ * 
  * @author Albin
  */
 import java.util.ArrayList;
@@ -18,12 +18,19 @@ public class Config {
     private static int islands;
     private static int traps;
     private static boolean[][] occupiedCells;
-    // Matriz para almacenar la información de cada casilla:
     // "ship:<color>", "island" o "trap"
     private static String[][] cellInfo;
     private static List<int[]> islandPositions = new ArrayList<>();
     private static List<int[]> trapPositions = new ArrayList<>();
+    private static String playerName;
 
+    public static void setPlayerName(String name) {
+        playerName = name;
+    }
+
+    public static String getPlayerName() {
+        return playerName;
+    }
     public static void setDifficulty(String difficulty) {
         switch (difficulty) {
             case "Easy":
@@ -35,14 +42,20 @@ public class Config {
             case "Medium":
                 gridSize = 15;
                 shots = 20;
-                islands = 4;
-                traps = 0;
+                islands = 6;
+                traps = 3;
                 break;
             case "Hard":
                 gridSize = 20;
                 shots = 15;
-                islands = 6;
-                traps = 2;
+                islands = 12;
+                traps = 9;
+                break;
+             case "Hairol":
+                gridSize = 22;
+                shots = 12;
+                islands = 14;
+                traps = 14;
                 break;
             default:
                 throw new IllegalArgumentException("Invalid difficulty level");
@@ -51,25 +64,25 @@ public class Config {
         cellInfo = new String[gridSize][gridSize];
     }
 
-    // Se invoca desde WindowController para registrar las posiciones de barcos
+    // Set ships position
     public static void setOccupiedCells(boolean[][] occupied) {
         occupiedCells = occupied;
-        // Genera islas y trampas ya que se conocen las posiciones de los barcos
+        // Generate islands and traps
         generateIslandsAndTraps();
     }
     
-    // Se invoca para registrar la información detallada de las casillas (por ejemplo, el color del barco)
+    // read info->ship color
     public static void setCellInfo(String[][] info) {
         cellInfo = info;
     }
 
-    // Genera islas y trampas evitando casillas ya ocupadas por barcos (o islas ya colocadas)
+    // add islands and traps
     private static void generateIslandsAndTraps() {
         Random random = new Random();
         islandPositions.clear();
         trapPositions.clear();
 
-        // Generar islas (cada una ocupa 2 celdas verticales, 1x2)
+        // add islands
         for (int i = 0; i < islands; i++) {
             int row, col;
             boolean valid;
@@ -87,7 +100,7 @@ public class Config {
             islandPositions.add(new int[]{row+1, col});
         }
 
-        // Generar trampas (una celda cada una)
+        // Add traps
         for (int i = 0; i < traps; i++) {
             int row, col;
             boolean valid;
@@ -134,4 +147,5 @@ public class Config {
     public static int getTrapCount() {
         return traps;
     }
+    
 }

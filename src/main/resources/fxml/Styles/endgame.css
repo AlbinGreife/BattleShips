@@ -1,0 +1,25 @@
+/* EndGame.css */
+
+.root {
+    /* Degradado diagonal de Rojo → Verde → Azul */
+    -fx-background-color: linear-gradient(
+        from 0% 0% to 100% 100%,
+        rgba(255, 0, 0, 0.8) 0%,
+        rgba(0, 255, 0, 0.8) 50%,
+        rgba(0, 0, 255, 0.8) 100%
+    );
+}
+
+.label {
+    /* Texto blanco y tamaño grande */
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.button {
+    /* Botones con fondo semitransparente */
+    -fx-background-color: rgba(255, 255, 255, 0.3);
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}

@@ -6,7 +6,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     Created on : 18 mar 2025, 18:57:08
     Author     : Albin
 */
+.mainFxmlClass {
 
+}
 .button {
     -fx-background-color: #003366;
     -fx-text-fill: #00bfff;
@@ -15,4 +17,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     -fx-background-radius: 5px;
     -fx-border-radius: 5px;
     -fx-font-size: 14px;
+}
+.grid-pane {
+    -fx-border-color: derive(cyan, -20%);
+    -fx-border-width: 1px;
+    -fx-border-style: dashed;
+    -fx-padding: 3px;
 }

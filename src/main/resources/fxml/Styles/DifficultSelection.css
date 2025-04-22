@@ -31,3 +31,21 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to ed
     -fx-border-radius: 5px;
     -fx-font-size: 14px;
 }
+.choice-box {
+    -fx-background-color: #003366;
+    -fx-text-fill: #00bfff;
+    -fx-border-color: #00bfff;
+    -fx-border-width: 2px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-font-size: 14px;
+}
+.text-field {
+    -fx-background-color: #003366;
+    -fx-text-fill: #00bfff;
+    -fx-border-color: #00bfff;
+    -fx-border-width: 2px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-font-size: 14px;
+}

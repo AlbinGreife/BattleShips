@@ -1,14 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.PrimaryWindowController">
+<BorderPane styleClass="border-pane" stylesheets="@Styles/PrimaryWindow.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="controllers.PrimaryWindowController">
     <top>
-        <Label fx:id="shotsLabel" text="Shots Remaining: 0" BorderPane.alignment="CENTER"/>
+        <VBox alignment="CENTER" spacing="5">
+        <HBox alignment="CENTER" spacing="10">
+        <Label fx:id="shotsLabel" text="Player: [Nombre] | Shots Remaining: 0" textFill="WHITE" />
+        <Button fx:id="enemyButton" text="Enemy Board" />
+        <Button fx:id="showPositionsButton" text="Show Positions" />
+        <Button fx:id="wildCardsButton" text="WildCards" />
+      </HBox>
+      <Label fx:id="statusLabel" text="" wrapText="true" />
+    </VBox>
     </top>
     <center>
-        <GridPane fx:id="gridPane" />
+        <HBox alignment="CENTER" spacing="20">
+            <GridPane fx:id="gridPaneUser" prefHeight="400.0" prefWidth="400.0" />
+            <GridPane fx:id="gridPaneTarget" prefHeight="400.0" prefWidth="400.0" />
+        </HBox>
     </center>
+    <bottom>
+<HBox alignment="CENTER" spacing="10">
+    <padding>
+        <Insets bottom="10" left="10" right="10" top="10" />
+    </padding>
+            <Label text="Row:" textFill="#eeeeee" />
+            <TextField fx:id="rowField" prefWidth="50" />
+            <Label text="Col:" textFill="WHITE" />
+            <TextField fx:id="colField" prefWidth="50" />
+            <Button fx:id="fireButton" text="Fire" />
+</HBox>
+    </bottom>
 </BorderPane>
